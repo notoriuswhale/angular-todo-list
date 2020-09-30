@@ -1,0 +1,29 @@
+.form {
+  display: flex;
+  align-items: flex-start;
+}
+
+.form-group {
+  width: 100%;
+}
+
+.form-group.date {
+  width: 10rem;
+  margin-left: 1rem;
+}
+
+h2 {
+  margin: 0.5rem 0;
+}
+
+.input.ng-invalid.ng-touched {
+  border: 2px solid red;
+}
+
+.error {
+  display: block;
+  margin-top: 0.5rem;
+  padding: 0.3rem;
+  color: red;
+  background-color: rgba(255, 255, 255, 0.7);
+}

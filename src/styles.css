@@ -1,1 +1,38 @@
 /* You can add global styles to this file, and also import other style files */
+
+* {
+  box-sizing: border-box;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #33ffbd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+input {
+  font-size: inherit;
+  font-style: inherit;
+  border: 1px solid black;
+  padding: 0.3rem;
+  width: 100%;
+}
+
+.button {
+  font-size: inherit;
+  font-style: inherit;
+  background-color: #33ffbd;
+  border: none;
+  padding: 0.3rem;
+  width: 4rem;
+  margin-left: 1rem;
+  border: 1px solid transparent;
+}

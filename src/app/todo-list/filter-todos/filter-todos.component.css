@@ -1,0 +1,28 @@
+.filter-todo {
+  display: flex;
+}
+
+.form-group {
+  width: 100%;
+}
+
+.form-group.date {
+  width: 10rem;
+  margin-left: 1rem;
+}
+
+h2 {
+  margin: 0.5rem 0;
+}
+
+.reset {
+  font-size: inherit;
+  font-style: inherit;
+  background-color: #33ffbd;
+  border: none;
+  padding: 0.3rem;
+  width: 4rem;
+  margin-left: 1rem;
+
+  border: 1px solid transparent;
+}

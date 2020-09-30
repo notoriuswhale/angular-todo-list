@@ -1,0 +1,8 @@
+<div class="sort">
+  <label for="sort">Sort </label>
+  <select name="sort" id="sort" (change)="onChange()" [(ngModel)]="sortIndex">
+    <option *ngFor="let option of sortOptions; let i = index" [value]="i">
+      {{ option.name }}
+    </option>
+  </select>
+</div>

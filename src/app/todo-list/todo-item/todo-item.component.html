@@ -1,0 +1,10 @@
+<div class="todo-item" [ngClass]="{ 'todo-item_done': todo.done }">
+  <div class="todo-item__date">{{ todo.date | date }}</div>
+  <div class="todo-item__content">
+    {{ todo.task }}
+  </div>
+  <button class="todo-item__delete" (click)="onDelete()">X</button>
+  <button class="todo-item__doneBtn" (click)="toogleDone()">
+    {{ todo.done ? "Mark Undone" : "Mark Done" }}
+  </button>
+</div>
