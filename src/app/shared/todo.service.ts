@@ -1,7 +1,5 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-
-import { TODOS } from './mock-todos';
 import { Todo, TodoFilters, TodoSort } from './todo.model';
 
 @Injectable({
@@ -81,10 +79,7 @@ export class TodoService {
     const filters = this.filters;
     const sortData = this.sortData;
 
-    //filtering
-    if (!filters || (!filters.filterText.trim() && !filters.filterDate)) {
-      // do nothing
-    } else {
+    if (filters && (filters.filterText.trim() || filters.filterDate)) {
       newTodos = newTodos.filter((todo) => {
         let textResult = todo.task.search(filters.filterText.trim()) !== -1;
         let dateResult =
@@ -97,14 +92,13 @@ export class TodoService {
     }
 
     //sorting
-    if (!sortData) {
-      return this.todosSubj.next(newTodos);
-    }
-    if (sortData.method === 'asc') {
-      newTodos.sort(this.ascSort(sortData.prop));
-    }
-    if (sortData.method === 'desc') {
-      newTodos.sort(this.descSort(sortData.prop));
+    if (sortData) {
+      if (sortData.method === 'asc') {
+        newTodos.sort(this.ascSort(sortData.prop));
+      }
+      if (sortData.method === 'desc') {
+        newTodos.sort(this.descSort(sortData.prop));
+      }
     }
 
     this.todosSubj.next(newTodos);

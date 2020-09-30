@@ -8,7 +8,6 @@ import { TodoListComponent } from './todo-list/todo-list.component';
 import { TodoItemComponent } from './todo-list/todo-item/todo-item.component';
 import { TodoService } from './shared/todo.service';
 import { FilterTodosComponent } from './todo-list/filter-todos/filter-todos.component';
-import { FilterTodo } from './shared/filter-todo.pipe';
 import { SortTodosComponent } from './todo-list/sort-todos/sort-todos.component';
 
 @NgModule({
@@ -18,7 +17,6 @@ import { SortTodosComponent } from './todo-list/sort-todos/sort-todos.component'
     TodoListComponent,
     TodoItemComponent,
     FilterTodosComponent,
-    FilterTodo,
     SortTodosComponent,
   ],
   imports: [BrowserModule, FormsModule],
