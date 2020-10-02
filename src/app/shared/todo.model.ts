@@ -1,3 +1,5 @@
+type SortMethod = 'asc' | 'desc';
+
 export interface Todo {
   id: number;
   task: string;
@@ -12,5 +14,5 @@ export interface TodoFilters {
 
 export interface TodoSort {
   prop: string;
-  method: string;
+  method: SortMethod;
 }

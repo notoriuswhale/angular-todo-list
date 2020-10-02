@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { TodoService } from 'src/app/shared/todo.service';
+import { TodoSort } from '../../shared/todo.model';
+
+interface SortOption {
+  name: string;
+  data: TodoSort;
+}
 
 @Component({
   selector: 'app-sort-todos',
@@ -8,7 +14,7 @@ import { TodoService } from 'src/app/shared/todo.service';
 })
 export class SortTodosComponent implements OnInit {
   sortIndex: number = 0;
-  sortOptions = [
+  sortOptions: SortOption[] = [
     { name: 'Default', data: null },
     { name: 'Aplhabetic descending', data: { prop: 'task', method: 'desc' } },
     { name: 'Aplhabetic ascending', data: { prop: 'task', method: 'asc' } },

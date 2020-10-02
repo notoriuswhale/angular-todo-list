@@ -15,7 +15,7 @@ export class TodoListComponent implements OnInit, OnDestroy {
   constructor(private todoService: TodoService) {}
 
   ngOnInit(): void {
-    this.subscription = this.todoService.getTodos().subscribe((todos) => {
+    this.subscription = this.todoService.todos.subscribe((todos) => {
       this.todos = todos;
     });
   }
