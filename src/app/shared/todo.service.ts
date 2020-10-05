@@ -86,12 +86,11 @@ export class TodoService {
 
   private filterTodos(todos: Todo[]) {
     const filters = this.filters;
-    if (!filters || (!filters.filterText.trim() && !filters.filterDate)) {
+    if (!filters || (!filters.filterText?.trim() && !filters.filterDate)) {
       return todos;
     }
 
-    let newTodos = [...todos];
-    newTodos = newTodos.filter((todo) => {
+    let newTodos = todos.filter((todo) => {
       let textResult = todo.task.search(filters.filterText.trim()) !== -1;
       let dateResult =
         todo.date.toISOString().split('T')[0] === filters.filterDate;

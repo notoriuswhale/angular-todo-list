@@ -1,30 +1,40 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { TodoService } from 'src/app/shared/todo.service';
 
 @Component({
   selector: 'app-filter-todos',
   templateUrl: './filter-todos.component.html',
   styleUrls: ['./filter-todos.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FilterTodosComponent implements OnInit {
-  filters = {
-    filterText: '',
-    filterDate: '',
-  };
+export class FilterTodosComponent implements OnInit, OnDestroy {
+  filters = this.fb.group({
+    filterText: [''],
+    filterDate: [''],
+  });
 
-  constructor(private todoService: TodoService) {}
+  formSubscription: Subscription;
 
-  ngOnInit(): void {}
+  constructor(private todoService: TodoService, private fb: FormBuilder) {}
 
-  onChange() {
-    this.todoService.setFilters(this.filters);
+  ngOnInit() {
+    this.formSubscription = this.filters.valueChanges.subscribe((value) => {
+      this.todoService.setFilters(value);
+    });
+  }
+
+  ngOnDestroy() {
+    this.formSubscription.unsubscribe();
   }
 
   resetFilters() {
-    this.filters = {
-      filterText: '',
-      filterDate: '',
-    };
-    this.todoService.setFilters(null);
+    this.filters.reset();
   }
 }

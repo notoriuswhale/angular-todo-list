@@ -1,35 +1,44 @@
-import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { TodoService } from '../shared/todo.service';
+import { myRequiredValidator } from '../shared/validators';
 
 @Component({
   selector: 'app-add-todo',
   templateUrl: './add-todo.component.html',
   styleUrls: ['./add-todo.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddTodoComponent implements OnInit {
-  newTodo = {
-    task: '',
-    date: new Date().toISOString().split('T')[0],
-  };
+  wasSubmitted: boolean = false;
 
-  constructor(private todoService: TodoService) {}
+  newTodo = this.fb.group({
+    task: ['', [myRequiredValidator]],
+    date: new Date().toISOString().split('T')[0],
+  });
+
+  constructor(private todoService: TodoService, private fb: FormBuilder) {}
 
   ngOnInit(): void {}
 
-  onSubmit(form: NgForm) {
-    console.log(form);
-    console.log(form.valid);
-    if (form.valid && this.newTodo.task.trim()) {
-      this.todoService.addTodo(this.newTodo.task, this.newTodo.date);
-      form.reset({
+  get task() {
+    return this.newTodo.get('task') as FormControl;
+  }
+
+  onSubmit() {
+    this.wasSubmitted = true;
+    console.log(this.newTodo);
+    if (this.newTodo.valid) {
+      this.todoService.addTodo(
+        this.newTodo.value.task,
+        this.newTodo.value.date
+      );
+      this.newTodo.reset({
         task: '',
         date: new Date().toISOString().split('T')[0],
       });
-    } else {
-      form.controls.task.markAsTouched();
 
-      this.newTodo.task = '';
+      this.wasSubmitted = false;
     }
   }
 }

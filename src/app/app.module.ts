@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { AddTodoComponent } from './add-todo/add-todo.component';
@@ -19,7 +19,7 @@ import { SortTodosComponent } from './todo-list/sort-todos/sort-todos.component'
     FilterTodosComponent,
     SortTodosComponent,
   ],
-  imports: [BrowserModule, FormsModule],
+  imports: [BrowserModule, ReactiveFormsModule],
   providers: [TodoService],
   bootstrap: [AppComponent],
 })

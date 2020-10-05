@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Todo } from '../shared/todo.model';
 import { TodoService } from '../shared/todo.service';
@@ -7,20 +7,24 @@ import { TodoService } from '../shared/todo.service';
   selector: 'app-todo-list',
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TodoListComponent implements OnInit, OnDestroy {
+export class TodoListComponent implements OnInit {
   todos: Todo[];
   subscription: Subscription;
 
-  constructor(private todoService: TodoService) {}
+  constructor(
+    public todoService: TodoService // private ref: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    this.subscription = this.todoService.todos.subscribe((todos) => {
-      this.todos = todos;
-    });
+    // this.subscription = this.todoService.todos.subscribe((todos) => {
+    //   this.todos = todos;
+    //   this.ref.markForCheck();
+    // });
   }
 
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
+  // ngOnDestroy() {
+  //   this.subscription.unsubscribe();
+  // }
 }

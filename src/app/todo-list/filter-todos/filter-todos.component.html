@@ -1,23 +1,21 @@
 <h2>Filter todo</h2>
-<div class="filter-todo">
+<form class="filter-todo" [formGroup]="filters">
   <div class="form-group">
     <input
       type="text"
       class="input"
-      name="task"
-      [(ngModel)]="filters.filterText"
-      (input)="onChange()"
+      name="filterText"
+      formControlName="filterText"
     />
   </div>
   <div class="form-group date">
     <input
       type="date"
-      name="date"
       class="input__date"
-      [(ngModel)]="filters.filterDate"
-      (input)="onChange()"
+      name="filterDate"
+      formControlName="filterDate"
     />
   </div>
 
-  <button class="button" (click)="resetFilters()">reset</button>
-</div>
+  <button type="button" class="button" (click)="resetFilters()">reset</button>
+</form>
