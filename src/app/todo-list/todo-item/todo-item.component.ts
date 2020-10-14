@@ -19,7 +19,6 @@ export class TodoItemComponent implements OnInit {
   constructor(private todoService: TodoService) {}
 
   onDelete() {
-    console.log('asd');
     this.todoService.deleteTodo(this.todo.id);
   }
 

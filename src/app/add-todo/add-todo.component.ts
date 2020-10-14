@@ -27,7 +27,6 @@ export class AddTodoComponent implements OnInit {
 
   onSubmit() {
     this.wasSubmitted = true;
-    console.log(this.newTodo);
     if (this.newTodo.valid) {
       this.todoService.addTodo(
         this.newTodo.value.task,
