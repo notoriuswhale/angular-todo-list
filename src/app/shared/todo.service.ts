@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 
 import { Todo, TodoFilters, TodoSort } from './todo.model';
 
@@ -8,61 +8,66 @@ import { Todo, TodoFilters, TodoSort } from './todo.model';
   providedIn: 'root',
 })
 export class TodoService {
-  private _todos: Todo[];
-  private filters: TodoFilters;
-  private sortData: TodoSort;
-  private todosSubj: BehaviorSubject<Todo[]>;
+  private filters = new BehaviorSubject<TodoFilters>(null);
+  private sortData = new BehaviorSubject<TodoSort>(null);
+  private todosSubject: BehaviorSubject<Todo[]>;
   todos: Observable<Todo[]>;
 
   constructor() {
-    this.getTodosFromLocalStorage();
-    this.todosSubj = new BehaviorSubject<Todo[]>(this._todos);
-    this.todos = this.todosSubj
-      .asObservable()
-      .pipe(
-        tap(this.saveTodosToLocalStorage),
-        map(this.filterTodos.bind(this)),
-        map(this.sortTodos.bind(this))
-      );
+    const initialTodos = this.getTodosFromLocalStorage();
+    this.todosSubject = new BehaviorSubject<Todo[]>(initialTodos);
+    const filterSort$ = combineLatest([this.filters, this.sortData]);
+    const todos = filterSort$.pipe(
+      switchMap(
+        ([filters, sort]): Observable<Todo[]> => {
+          return this.todosSubject
+            .asObservable()
+            .pipe(
+              tap(this.saveTodosToLocalStorage),
+              map(this.filterTodos(filters)),
+              map(this.sortTodos(sort))
+            );
+        }
+      )
+    );
+    this.todos = todos;
   }
 
   addTodo(task: string, date: string) {
-    const newTodos = [...this._todos];
+    const newTodos = [...this.todosSubject.getValue()];
     newTodos.push({
       id: this.genId(),
       task,
       date: new Date(date),
       done: false,
     });
-    this._todos = newTodos;
-    this.updateTodos();
+    this.updateTodos(newTodos);
   }
 
   deleteTodo(id: number) {
-    this._todos = this._todos.filter((todo) => todo.id !== id);
-    this.updateTodos();
+    const newTodos = this.todosSubject
+      .getValue()
+      .filter((todo) => todo.id !== id);
+    this.updateTodos(newTodos);
   }
 
   toogleDone(id: number) {
-    this._todos = this._todos.map((todo) => {
+    const newTodos = this.todosSubject.getValue().map((todo) => {
       if (todo.id === id) {
         return { ...todo, done: !todo.done };
       } else {
         return todo;
       }
     });
-    this.updateTodos();
+    this.updateTodos(newTodos);
   }
 
   setFilters(filters: TodoFilters) {
-    this.filters = filters;
-    this.updateTodos();
+    this.filters.next(filters);
   }
 
   setSort(data: TodoSort) {
-    this.sortData = data;
-
-    this.updateTodos();
+    this.sortData.next(data);
   }
 
   getTodosFromLocalStorage() {
@@ -73,51 +78,53 @@ export class TodoService {
         return todo;
       });
     }
-    this._todos = todos || [];
+    return todos || [];
   }
 
   saveTodosToLocalStorage(todos: Todo[]) {
     localStorage.setItem('todos', JSON.stringify(todos));
   }
 
-  private updateTodos() {
-    this.todosSubj.next(this._todos);
+  private updateTodos(newTodos: Todo[]) {
+    this.todosSubject.next(newTodos);
   }
 
-  private filterTodos(todos: Todo[]) {
-    const filters = this.filters;
-    if (!filters || (!filters.filterText?.trim() && !filters.filterDate)) {
-      return todos;
-    }
+  private filterTodos(filters: TodoFilters) {
+    return (todos: Todo[]) => {
+      if (!filters || (!filters.filterText?.trim() && !filters.filterDate)) {
+        return todos;
+      }
 
-    let newTodos = todos.filter((todo) => {
-      let textResult = todo.task.search(filters.filterText.trim()) !== -1;
-      let dateResult =
-        todo.date.toISOString().split('T')[0] === filters.filterDate;
-      if (!filters.filterDate) dateResult = true;
-      if (!filters.filterText.trim()) textResult = true;
-      return textResult && dateResult;
-    });
+      let newTodos = todos.filter((todo) => {
+        let textResult = todo.task.search(filters.filterText.trim()) !== -1;
+        let dateResult =
+          todo.date.toISOString().split('T')[0] === filters.filterDate;
+        if (!filters.filterDate) dateResult = true;
+        if (!filters.filterText.trim()) textResult = true;
+        return textResult && dateResult;
+      });
 
-    return newTodos;
+      return newTodos;
+    };
   }
 
-  private sortTodos(todos: Todo[]) {
-    const sortData = this.sortData;
-    if (!sortData) {
-      return todos;
-    }
+  private sortTodos(sortData: TodoSort) {
+    return (todos: Todo[]) => {
+      if (!sortData) {
+        return todos;
+      }
 
-    let newTodos = [...todos];
+      let newTodos = [...todos];
 
-    if (sortData.method === 'asc') {
-      newTodos.sort(this.ascSort(sortData.prop));
-    }
-    if (sortData.method === 'desc') {
-      newTodos.sort(this.descSort(sortData.prop));
-    }
+      if (sortData.method === 'asc') {
+        newTodos.sort(this.ascSort(sortData.prop));
+      }
+      if (sortData.method === 'desc') {
+        newTodos.sort(this.descSort(sortData.prop));
+      }
 
-    return newTodos;
+      return newTodos;
+    };
   }
 
   private ascSort(prop: string) {
@@ -136,9 +143,10 @@ export class TodoService {
   }
 
   private genId(): number {
-    if (!this._todos.length) {
+    const todosArr = this.todosSubject.getValue();
+    if (!todosArr.length) {
       return 1;
     }
-    return this._todos[this._todos.length - 1].id + 1;
+    return todosArr[todosArr.length - 1].id + 1;
   }
 }
