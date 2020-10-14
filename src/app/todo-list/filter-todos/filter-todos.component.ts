@@ -35,6 +35,9 @@ export class FilterTodosComponent implements OnInit, OnDestroy {
   }
 
   resetFilters() {
-    this.filters.reset();
+    this.filters.reset({
+      filterText: '',
+      filterDate: '',
+    });
   }
 }
